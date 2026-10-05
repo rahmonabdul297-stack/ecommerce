@@ -25,6 +25,7 @@ import { AdminCategoriesPage } from "@/pages/admin/AdminCategoriesPage";
 import { AdminUsersPage } from "@/pages/admin/AdminUsersPage";
 import ShopPage from "./pages/storefront/ShopPage";
 import { FaWhatsapp } from "react-icons/fa";
+import AboutPage from "./pages/storefront/AboutPage";
 
 function NotFoundPage() {
   return (
@@ -91,6 +92,7 @@ export default function App() {
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/shop" element={<ShopPage />} />
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/orders" element={<OrderListPage />} />
               <Route path="/orders/:orderId" element={<OrderDetailPage />} />

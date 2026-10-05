@@ -211,10 +211,7 @@ export function CartPage() {
                   Proceed to Checkout
                 </Button>
 
-                <div className="mt-4 flex items-start gap-2 text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-                  <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-                  <span>Subtotal comes from the backend. Discount prices are not applied to cart totals by the API.</span>
-                </div>
+               
               </div>
             </div>
           </div>

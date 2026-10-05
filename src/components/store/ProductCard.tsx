@@ -59,7 +59,7 @@ export function ProductCard({
         <h3 className="font-medium text-gray-900 line-clamp-2 group-hover:text-teal-600 transition-colors">
           {product.title}
         </h3>
-
+          
         <div className="mt-auto pt-3 flex items-baseline gap-2">
           <span className="text-lg font-bold text-gray-900">
             {formatPrice(price)}

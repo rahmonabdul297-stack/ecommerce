@@ -133,7 +133,7 @@ export function OrderDetailPage() {
                   <div key={idx} className="flex items-center gap-4">
                     <div className="w-16 h-16 bg-gray-50 rounded-lg overflow-hidden shrink-0">
                       {item.image ? (
-                        <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                        <img src={item.image} alt={item.image} className="w-full h-full object-cover" />
                       ) : null}
                     </div>
                     <div className="flex-1">
