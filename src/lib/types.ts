@@ -62,8 +62,8 @@ export interface AdminUser {
   _id: string;
   name?: string;
   email?: string;
-  role?: string;
-  createdAt?: string;
+  isVerified?: boolean;
+  date?: string;
   // password field intentionally omitted — endpoint returns it but we must not retain it
 }
 

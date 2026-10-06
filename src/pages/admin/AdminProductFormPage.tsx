@@ -210,7 +210,7 @@ export function AdminProductFormPage() {
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <FullPageSpinner message="Loading product…" />
       </div>
     );
@@ -218,7 +218,7 @@ export function AdminProductFormPage() {
 
   if (error) {
     return (
-      <div className="p-6 lg:p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <ErrorState message={error} onRetry={load} />
       </div>
     );
@@ -227,7 +227,7 @@ export function AdminProductFormPage() {
   const totalImages = imagesToKeep.length + newImages.length;
 
   return (
-    <div className="p-6 lg:p-8 max-w-3xl">
+    <div className="w-full max-w-3xl p-4 sm:p-6 lg:p-8">
       <Link
         to="/admin/products"
         className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-teal-600 mb-6 transition-colors"
@@ -413,13 +413,21 @@ export function AdminProductFormPage() {
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-          <Link to="/admin/products">
-            <Button type="button" variant="outline">
+        <div className="flex flex-col-reverse gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+          <Link to="/admin/products" className="w-full sm:w-auto">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-center sm:w-auto"
+            >
               Cancel
             </Button>
           </Link>
-          <Button type="submit" loading={saving}>
+          <Button
+            type="submit"
+            loading={saving}
+            className="w-full justify-center sm:w-auto"
+          >
             {saving ? "Saving…" : isEdit ? "Update product" : "Create product"}
           </Button>
         </div>

@@ -1,7 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Pencil, Trash2, Tag } from "lucide-react";
 import type { Category } from "@/lib/types";
-import { fetchCategories, createCategory, updateCategory, deleteCategory } from "@/services/categoryService";
+import {
+  fetchCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from "@/services/categoryService";
 import { useToast } from "@/context/ToastContext";
 import { FullPageSpinner } from "@/components/ui/Spinner";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -28,7 +33,11 @@ export function AdminCategoriesPage() {
 
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<CatFormState>({ name: "", description: "", isActive: true });
+  const [form, setForm] = useState<CatFormState>({
+    name: "",
+    description: "",
+    isActive: true,
+  });
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
@@ -43,7 +52,9 @@ export function AdminCategoriesPage() {
       setCategories(data.categories);
       setCount(data.count);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load categories");
+      setError(
+        err instanceof Error ? err.message : "Failed to load categories",
+      );
     } finally {
       setLoading(false);
     }
@@ -62,7 +73,11 @@ export function AdminCategoriesPage() {
 
   const openEdit = (cat: Category) => {
     setEditingId(cat._id);
-    setForm({ name: cat.name, description: cat.description ?? "", isActive: true });
+    setForm({
+      name: cat.name,
+      description: cat.description ?? "",
+      isActive: true,
+    });
     setFormError(null);
     setShowModal(true);
   };
@@ -89,7 +104,9 @@ export function AdminCategoriesPage() {
       setShowModal(false);
       load();
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : "Failed to save category");
+      setFormError(
+        err instanceof Error ? err.message : "Failed to save category",
+      );
     } finally {
       setSaving(false);
     }
@@ -104,20 +121,25 @@ export function AdminCategoriesPage() {
       setDeleteId(null);
       load();
     } catch (err) {
-      showToast("error", err instanceof Error ? err.message : "Failed to delete category");
+      showToast(
+        "error",
+        err instanceof Error ? err.message : "Failed to delete category",
+      );
     } finally {
       setDeleting(false);
     }
   };
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="min-w-0 p-4 sm:p-6 lg:p-8">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-          <p className="text-sm text-gray-500 mt-1">{count} active categories</p>
+          <p className="text-sm text-gray-500 mt-1">
+            {count} active categories
+          </p>
         </div>
-        <Button onClick={openAdd}>
+        <Button onClick={openAdd} className="w-full justify-center sm:w-auto">
           <Plus className="h-4 w-4" />
           New category
         </Button>
@@ -137,23 +159,41 @@ export function AdminCategoriesPage() {
       {!loading && !error && categories.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[680px] text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="text-left font-medium text-gray-600 px-4 py-3">Name</th>
-                  <th className="text-left font-medium text-gray-600 px-4 py-3">Slug</th>
-                  <th className="text-left font-medium text-gray-600 px-4 py-3">Description</th>
-                  <th className="text-left font-medium text-gray-600 px-4 py-3">Created</th>
-                  <th className="text-right font-medium text-gray-600 px-4 py-3">Actions</th>
+                  <th className="text-left font-medium text-gray-600 px-4 py-3">
+                    Name
+                  </th>
+                  <th className="text-left font-medium text-gray-600 px-4 py-3">
+                    Slug
+                  </th>
+                  <th className="text-left font-medium text-gray-600 px-4 py-3">
+                    Description
+                  </th>
+                  <th className="text-left font-medium text-gray-600 px-4 py-3">
+                    Created
+                  </th>
+                  <th className="text-right font-medium text-gray-600 px-4 py-3">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {categories.map((cat) => (
                   <tr key={cat._id} className="hover:bg-gray-50/50">
-                    <td className="px-4 py-3 font-medium text-gray-900">{cat.name}</td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{cat.slug}</td>
-                    <td className="px-4 py-3 text-gray-600 max-w-xs truncate">{cat.description ?? "—"}</td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(cat.createdAt ?? "")}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">
+                      {cat.name}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">
+                      {cat.slug}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600 max-w-xs truncate">
+                      {cat.description ?? "—"}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">
+                      {formatDate(cat.createdAt ?? "")}
+                    </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button
@@ -198,10 +238,14 @@ export function AdminCategoriesPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
             <textarea
               value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
               className="form-input min-h-[80px] resize-y"
               placeholder="Optional"
             />
@@ -210,7 +254,9 @@ export function AdminCategoriesPage() {
           {formError && <InlineError message={formError} />}
 
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setShowModal(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleSave} loading={saving}>
               {saving ? "Saving…" : editingId ? "Update" : "Create"}
             </Button>

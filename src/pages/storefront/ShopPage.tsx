@@ -187,7 +187,7 @@ export default function ShopPage() {
           )}
 
           {!loading && !error && filteredProducts.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-1">
               {filteredProducts.map((product, index) => (
                 <div
                   key={product._id}

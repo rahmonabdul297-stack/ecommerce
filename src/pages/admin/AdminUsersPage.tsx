@@ -1,12 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
-import { Users, Trash2, ShieldAlert } from "lucide-react";
+import { Users, Trash2 } from "lucide-react";
 import type { AdminUser } from "@/lib/types";
 import { fetchAdminUsers, deleteAdminUser } from "@/services/adminUserService";
 import { useToast } from "@/context/ToastContext";
 import { FullPageSpinner } from "@/components/ui/Spinner";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatDate } from "@/lib/utils";
@@ -45,31 +44,21 @@ export function AdminUsersPage() {
       showToast("success", "User deleted");
       setDeleteId(null);
     } catch (err) {
-      showToast("error", err instanceof Error ? err.message : "Failed to delete user");
+      showToast(
+        "error",
+        err instanceof Error ? err.message : "Failed to delete user",
+      );
     } finally {
       setDeleting(false);
     }
   };
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="min-w-0 p-4 sm:p-6 lg:p-8">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Users</h1>
           <p className="text-sm text-gray-500 mt-1">{users.length} users</p>
-        </div>
-      </div>
-
-      {/* Security warning */}
-      <div className="mb-6 flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg p-4">
-        <ShieldAlert className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
-        <div className="text-sm text-red-700">
-          <p className="font-medium">Security warning</p>
-          <p className="mt-1 text-red-600">
-            The backend user endpoint currently returns all fields including password hashes and lacks
-            authorization checks. The password field is stripped client-side but this is not a substitute
-            for server-side filtering. Backend authorization and response filtering are absent.
-          </p>
         </div>
       </div>
 
@@ -86,27 +75,47 @@ export function AdminUsersPage() {
       {!loading && !error && users.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[680px] text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="text-left font-medium text-gray-600 px-4 py-3">Name</th>
-                  <th className="text-left font-medium text-gray-600 px-4 py-3">Email</th>
-                  <th className="text-left font-medium text-gray-600 px-4 py-3">Role</th>
-                  <th className="text-left font-medium text-gray-600 px-4 py-3">Joined</th>
-                  <th className="text-right font-medium text-gray-600 px-4 py-3">Actions</th>
+                  <th className="text-left font-medium text-gray-600 px-4 py-3">
+                    Name
+                  </th>
+                  <th className="text-left font-medium text-gray-600 px-4 py-3">
+                    Email
+                  </th>
+                  <th className="text-left font-medium text-gray-600 px-4 py-3">
+                    verified
+                  </th>
+                  <th className="text-left font-medium text-gray-600 px-4 py-3">
+                    Joined
+                  </th>
+                  <th className="text-right font-medium text-gray-600 px-4 py-3">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {users.map((user) => (
                   <tr key={user._id} className="hover:bg-gray-50/50">
-                    <td className="px-4 py-3 font-medium text-gray-900">{user.name ?? "—"}</td>
-                    <td className="px-4 py-3 text-gray-600">{user.email ?? "—"}</td>
-                    <td className="px-4 py-3">
-                      {user.role ? (
-                        <Badge tone={user.role === "admin" ? "warning" : "neutral"}>{user.role}</Badge>
-                      ) : "—"}
+                    <td className="px-4 py-3 font-medium text-gray-900">
+                      {user.name ?? "—"}
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{formatDate(user.createdAt ?? "")}</td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {user.email ?? "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      {user.isVerified === undefined ? (
+                        <span className="text-gray-400">Unknown</span>
+                      ) : (
+                        <Badge tone={user.isVerified ? "success" : "warning"}>
+                          {user.isVerified ? "Verified" : "Unverified"}
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">
+                      {user.date ? formatDate(user.date) : "—"}
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => setDeleteId(user._id)}
