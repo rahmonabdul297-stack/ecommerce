@@ -7,6 +7,7 @@ export interface UserProfile {
   username?: string;
   email?: string;
   phone?: string;
+  role?: string;
   date?: string;
   bio?: string;
   profileImage?: string;
@@ -63,6 +64,7 @@ function normalizeProfile(value: unknown): UserProfile {
     username: typeof user.username === "string" ? user.username : "",
     email: typeof user.email === "string" ? user.email : "",
     phone: typeof user.phone === "string" ? user.phone : "",
+    role: typeof user.role === "string" ? user.role : undefined,
     date: typeof user.date === "string" ? user.date : "",
     bio: typeof user.bio === "string" ? user.bio : "",
     profileImage:

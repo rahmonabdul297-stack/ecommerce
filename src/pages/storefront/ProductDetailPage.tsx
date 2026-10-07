@@ -1,14 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  ShoppingCart,
-  Minus,
-  Plus,
-  AlertTriangle,
-} from "lucide-react";
-import type { Product } from "@/lib/types";
-import { fetchAdminProductById } from "@/services/productService";
+import { ArrowLeft, ShoppingCart, Minus, Plus } from "lucide-react";
+import { ApiRequestError, type Product } from "@/lib/types";
+import { fetchPublicProductById } from "@/services/productService";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/context/ToastContext";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
@@ -36,13 +30,16 @@ export function ProductDetailPage() {
     setLoading(true);
     setError(null);
     try {
-      const p = await fetchAdminProductById(id);
-      if (!p.isPublished) {
-        throw new Error("This product is not available.");
-      }
+      const p = await fetchPublicProductById(id);
       setProduct(p);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load product");
+      setError(
+        err instanceof ApiRequestError && err.status === 404
+          ? "Product not found or no longer available."
+          : err instanceof Error
+            ? err.message
+            : "Failed to load product",
+      );
     } finally {
       setLoading(false);
     }
@@ -154,7 +151,6 @@ export function ProductDetailPage() {
               <Badge tone="info">
                 {product.category?.name ?? "Uncategorized"}
               </Badge>
-              {!product.isPublished && <Badge tone="warning">Draft</Badge>}
               {outOfStock ? (
                 <Badge tone="error">Out of stock</Badge>
               ) : product.stock <= 5 ? (
@@ -217,8 +213,6 @@ export function ProductDetailPage() {
                 {outOfStock ? "Out of Stock" : "Add to Cart"}
               </Button>
             </div>
-
-          
           </div>
         </div>
       </div>

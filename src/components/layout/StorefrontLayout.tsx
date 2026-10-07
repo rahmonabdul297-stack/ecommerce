@@ -13,7 +13,7 @@ import {
 import { useCart } from "@/context/CartContext";
 import { getMyProfile, type UserProfile } from "@/services/profileService";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { fetchCategories } from "@/services/categoryService";
+import { fetchPublicCategories } from "@/services/categoryService";
 import type { Category } from "@/lib/types";
 
 function CategoryDropdown({
@@ -125,7 +125,7 @@ export function StorefrontHeader() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchCategories()
+    fetchPublicCategories()
       .then((result) => {
         if (!cancelled) setCategories(result.categories);
       })
@@ -149,7 +149,9 @@ export function StorefrontHeader() {
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `text-sm font-medium transition-colors ${
-      isActive ? "text-teal-600 font-semibold" : "text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"
+      isActive
+        ? "text-teal-600 font-semibold"
+        : "text-gray-700 hover:text-teal-600 dark:text-gray-300 dark:hover:text-teal-400"
     }`;
 
   return (

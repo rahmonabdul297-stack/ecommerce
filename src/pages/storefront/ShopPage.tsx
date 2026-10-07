@@ -1,39 +1,53 @@
 import { useEffect, useState, useMemo } from "react";
-import { Search, SlidersHorizontal, ArrowUpDown, Package, Sparkles } from "lucide-react";
+import { Search, ArrowUpDown, Package, Sparkles } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
-import { fetchCategories } from "@/services/categoryService";
+import { fetchPublicCategories } from "@/services/categoryService";
 import type { Product, Category } from "@/lib/types";
 import { FullPageSpinner } from "@/components/ui/Spinner";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { fetchAdminProducts } from "@/services/productService";
+import { fetchPublicProducts } from "@/services/productService";
 import { ProductCard } from "@/components/store/ProductCard";
 // Assuming you have a ProductCard component available in your project
-
 
 export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [categoryError, setCategoryError] = useState<string | null>(null);
 
   // Filter & Sort States
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<"default" | "low-high" | "high-low">("default");
+  type SortOption = "default" | "low-high" | "high-low";
+  const [sortBy, setSortBy] = useState<SortOption>("default");
 
   const loadData = async () => {
     setLoading(true);
     setError(null);
+    setCategoryError(null);
     try {
-      const [productData, categoryData] = await Promise.all([
-        fetchAdminProducts(),
-        fetchCategories(),
+      const [productResult, categoryResult] = await Promise.allSettled([
+        fetchPublicProducts(),
+        fetchPublicCategories(),
       ]);
-      setProducts(productData.products || []);
-      setCategories(categoryData.categories || []);
+
+      if (productResult.status === "rejected") {
+        throw productResult.reason;
+      }
+
+      setProducts(productResult.value.products);
+      if (categoryResult.status === "fulfilled") {
+        setCategories(categoryResult.value.categories);
+      } else {
+        setCategories([]);
+        setCategoryError("Categories are unavailable; showing all products.");
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load shop catalog.");
+      setError(
+        err instanceof Error ? err.message : "Failed to load shop catalog.",
+      );
     } finally {
       setLoading(false);
     }
@@ -53,14 +67,15 @@ export default function ShopPage() {
       list = list.filter(
         (p) =>
           p.title.toLowerCase().includes(q) ||
-          p.description?.toLowerCase().includes(q)
+          p.description?.toLowerCase().includes(q),
       );
     }
 
     // Category filter
     if (selectedCategory !== "all") {
       list = list.filter((p) => {
-        const catId = typeof p.category === "string" ? p.category : p.category?._id;
+        const catId =
+          typeof p.category === "string" ? p.category : p.category?._id;
         return catId === selectedCategory;
       });
     }
@@ -79,7 +94,6 @@ export default function ShopPage() {
     <StorefrontLayout>
       <main className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          
           {/* Header Banner */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-200 dark:border-gray-800 pb-6">
             <div className="space-y-1">
@@ -90,7 +104,8 @@ export default function ShopPage() {
                 Explore All Products
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Discover genuine smartphones, fast chargers, power banks, and accessories.
+                Discover genuine smartphones, fast chargers, power banks, and
+                accessories.
               </p>
             </div>
 
@@ -104,7 +119,6 @@ export default function ShopPage() {
           {/* Controls Bar: Search, Category Filter, and Price Sort */}
           <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4">
-              
               {/* Search input */}
               <div className="relative">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -123,7 +137,7 @@ export default function ShopPage() {
                   <ArrowUpDown className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                   <select
                     value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
+                    onChange={(e) => setSortBy(e.target.value as SortOption)}
                     aria-label="Sort products by price"
                     className="w-full pl-10 pr-8 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm font-medium text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none transition-all cursor-pointer"
                   >
@@ -161,6 +175,14 @@ export default function ShopPage() {
                 </button>
               ))}
             </div>
+            {categoryError && (
+              <p
+                role="status"
+                className="text-xs text-amber-700 dark:text-amber-300"
+              >
+                {categoryError}
+              </p>
+            )}
           </div>
 
           {/* States: Loading, Error, Empty, and Product Grid */}
@@ -199,7 +221,6 @@ export default function ShopPage() {
               ))}
             </div>
           )}
-
         </div>
       </main>
     </StorefrontLayout>

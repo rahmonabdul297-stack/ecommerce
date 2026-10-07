@@ -9,31 +9,28 @@ import {
   CreditCard,
   CheckCircle2,
 } from "lucide-react";
-import type { Category, ProductsListData } from "@/lib/types";
-import { fetchAdminProducts } from "@/services/productService";
-import { fetchCategories } from "@/services/categoryService";
+import type { Product } from "@/lib/types";
+import { fetchPublicProducts } from "@/services/productService";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
-import { ProductCard } from "@/components/store/ProductCard";
 import { FullPageSpinner } from "@/components/ui/Spinner";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { StaticCollectionShowcase } from "./productCard";
+import { ProductShowcase } from "./ProductShowcase";
 import { FaArrowRight } from "react-icons/fa";
 
 export function ProductListPage() {
-  const [data, setData] = useState<ProductsListData | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const selectedCategory = searchParams.get("category") ?? "all";
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await fetchAdminProducts();
-      setData(result);
+      const result = await fetchPublicProducts();
+      setProducts(result.products);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load products");
     } finally {
@@ -45,25 +42,7 @@ export function ProductListPage() {
     load();
   }, [load]);
 
-  useEffect(() => {
-    let cancelled = false;
-    fetchCategories()
-      .then((result) => {
-        if (!cancelled) setCategories(result.categories);
-      })
-      .catch(() => {
-        if (!cancelled) setCategories([]);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const publishedProducts = data?.products.filter((p) => p.isPublished) ?? [];
-
-  // Filter products based on selected category tag if needed
-  const filteredProducts = publishedProducts.filter((product) => {
+  const filteredProducts = products.slice(0,5).filter((product) => {
     if (selectedCategory === "all") return true;
     if (typeof product.category === "object" && product.category !== null) {
       return (
@@ -73,13 +52,6 @@ export function ProductListPage() {
     }
     return String(product.category) === selectedCategory;
   });
-
-  const selectCategory = (categoryId: string) => {
-    const nextSearchParams = new URLSearchParams(searchParams);
-    if (categoryId === "all") nextSearchParams.delete("category");
-    else nextSearchParams.set("category", categoryId);
-    setSearchParams(nextSearchParams);
-  };
 
   return (
     <StorefrontLayout>
@@ -180,63 +152,88 @@ export function ProductListPage() {
         id="collection"
         className="mx-auto max-w-7xl scroll-mt-24 px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16 space-y-6 sm:space-y-8"
       >
-        <StaticCollectionShowcase />
-        <Link to="/shop" className="flex justify-end hover:text-teal-400 items-center gap-2">
-          see more <FaArrowRight/>
-        </Link>
+        {loading && <FullPageSpinner message="Loading products…" />}
+        {error && <ErrorState message={error} onRetry={load} />}
+        {!loading && !error && filteredProducts.length === 0 && (
+          <EmptyState
+            title={
+              selectedCategory === "all"
+                ? "No products available"
+                : "No products in this category"
+            }
+            message="Published products will appear here when they are available."
+          />
+        )}
+        {!loading && !error && filteredProducts.length > 0 && (
+          <>
+            <ProductShowcase products={filteredProducts} />
+            <Link
+              to="/shop"
+              className="flex items-center justify-end gap-2 hover:text-teal-400"
+            >
+              See all products <FaArrowRight />
+            </Link>
+          </>
+        )}
       </div>
 
       {/* About Us Summary Section */}
-     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-  <div className="bg-gradient-to-br from-stone-900 via-teal-950 to-gray-900 dark:from-stone-950 dark:via-teal-950 dark:to-stone-900 text-white rounded-3xl p-6 sm:p-10 lg:p-16 relative overflow-hidden border border-teal-500/20 shadow-xl">
-    {/* Decorative background watermark icon */}
-    <div className="absolute right-0 bottom-0 opacity-10 translate-x-12 translate-y-12 pointer-events-none select-none">
-      <Smartphone className="h-72 w-72 sm:h-96 sm:w-96 text-teal-400" />
-    </div>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="bg-gradient-to-br from-stone-900 via-teal-950 to-gray-900 dark:from-stone-950 dark:via-teal-950 dark:to-stone-900 text-white rounded-3xl p-6 sm:p-10 lg:p-16 relative overflow-hidden border border-teal-500/20 shadow-xl">
+          {/* Decorative background watermark icon */}
+          <div className="absolute right-0 bottom-0 opacity-10 translate-x-12 translate-y-12 pointer-events-none select-none">
+            <Smartphone className="h-72 w-72 sm:h-96 sm:w-96 text-teal-400" />
+          </div>
 
-    <div className="max-w-2xl relative z-10 space-y-6">
-      <span className="inline-block bg-teal-500/20 text-teal-300 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide border border-teal-500/30">
-        About Nokata
-      </span>
+          <div className="max-w-2xl relative z-10 space-y-6">
+            <span className="inline-block bg-teal-500/20 text-teal-300 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide border border-teal-500/30">
+              About Nokata
+            </span>
 
-      <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-snug sm:leading-tight">
-        Your Trusted Destination for Mobile Phones & Tech Accessories
-      </h2>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-snug sm:leading-tight">
+              Your Trusted Destination for Mobile Phones & Tech Accessories
+            </h2>
 
-      <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed">
-        At Nokata, we know your mobile device is essential to your daily
-        life. That's why we curate top-tier smartphones, heavy-duty power
-        banks, original fast chargers, protective pouches, and
-        crystal-clear earpods. Enjoy seamless shopping and reliable
-        delivery right to your door.
-      </p>
+            <p className="text-gray-300 text-sm sm:text-base lg:text-lg leading-relaxed">
+              At Nokata, we know your mobile device is essential to your daily
+              life. That's why we curate top-tier smartphones, heavy-duty power
+              banks, original fast chargers, protective pouches, and
+              crystal-clear earpods. Enjoy seamless shopping and reliable
+              delivery right to your door.
+            </p>
 
-      {/* Responsive Stats Grid */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
-        <div className="bg-teal-900/40 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border border-teal-800/50 shadow-inner">
-          <h4 className="text-lg sm:text-2xl font-bold text-teal-400 tracking-tight">
-            100%
-          </h4>
-          <p className="text-[11px] sm:text-xs text-gray-300 mt-0.5 sm:mt-1 font-medium">Original Gear</p>
+            {/* Responsive Stats Grid */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-2">
+              <div className="bg-teal-900/40 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border border-teal-800/50 shadow-inner">
+                <h4 className="text-lg sm:text-2xl font-bold text-teal-400 tracking-tight">
+                  100%
+                </h4>
+                <p className="text-[11px] sm:text-xs text-gray-300 mt-0.5 sm:mt-1 font-medium">
+                  Original Gear
+                </p>
+              </div>
+
+              <div className="bg-teal-900/40 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border border-teal-800/50 shadow-inner">
+                <h4 className="text-lg sm:text-2xl font-bold text-teal-400 tracking-tight">
+                  Fast
+                </h4>
+                <p className="text-[11px] sm:text-xs text-gray-300 mt-0.5 sm:mt-1 font-medium">
+                  Lagos Delivery
+                </p>
+              </div>
+
+              <div className="bg-teal-900/40 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border border-teal-800/50 shadow-inner">
+                <h4 className="text-lg sm:text-2xl font-bold text-teal-400 tracking-tight">
+                  Secure
+                </h4>
+                <p className="text-[11px] sm:text-xs text-gray-300 mt-0.5 sm:mt-1 font-medium">
+                  Paystack Checkout
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div className="bg-teal-900/40 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border border-teal-800/50 shadow-inner">
-          <h4 className="text-lg sm:text-2xl font-bold text-teal-400 tracking-tight">
-            Fast
-          </h4>
-          <p className="text-[11px] sm:text-xs text-gray-300 mt-0.5 sm:mt-1 font-medium">Lagos Delivery</p>
-        </div>
-
-        <div className="bg-teal-900/40 backdrop-blur-sm p-3.5 sm:p-4 rounded-2xl border border-teal-800/50 shadow-inner">
-          <h4 className="text-lg sm:text-2xl font-bold text-teal-400 tracking-tight">
-            Secure
-          </h4>
-          <p className="text-[11px] sm:text-xs text-gray-300 mt-0.5 sm:mt-1 font-medium">Paystack Checkout</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
     </StorefrontLayout>
   );
 }

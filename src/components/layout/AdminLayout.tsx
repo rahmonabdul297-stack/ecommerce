@@ -4,6 +4,7 @@ import {
   Package,
   Tag,
   Users,
+  ClipboardList,
   ArrowLeft,
   ShoppingBag,
   Menu,
@@ -13,6 +14,7 @@ import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 const adminLinks = [
   { to: "/admin/products", label: "Products", icon: Package },
+  { to: "/admin/orders", label: "Orders", icon: ClipboardList },
   { to: "/admin/categories", label: "Categories", icon: Tag },
   { to: "/admin/users", label: "Users", icon: Users },
 ];

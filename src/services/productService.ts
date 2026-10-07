@@ -1,7 +1,30 @@
 import { api } from "@/lib/apiClient";
 import type { ApiSuccess, Product, ProductsListData } from "../lib/types";
 
-/** GET /api/v1/admin/products — includes drafts (not public-safe) */
+/** GET /api/v1/products — published storefront catalog */
+export async function fetchPublicProducts(
+  signal?: AbortSignal,
+): Promise<ProductsListData> {
+  const res = await api.get<ApiSuccess<ProductsListData>>(
+    "/api/v1/products",
+    signal,
+  );
+  return res.data;
+}
+
+/** GET /api/v1/products/:id — :id may be a Mongo ID or slug */
+export async function fetchPublicProductById(
+  id: string,
+  signal?: AbortSignal,
+): Promise<Product> {
+  const res = await api.get<ApiSuccess<{ product: Product }>>(
+    `/api/v1/products/${encodeURIComponent(id)}`,
+    signal,
+  );
+  return res.data.product;
+}
+
+/** GET /api/v1/admin/products — protected admin listing, may include drafts */
 export async function fetchAdminProducts(
   signal?: AbortSignal,
 ): Promise<ProductsListData> {
@@ -77,8 +100,3 @@ export async function deleteProductImage(
   );
   return res.data.images;
 }
-
-/**
- * BACKEND NOTE: There is no public catalog route. The endpoints above are all
- * admin-prefixed and include drafts. Do not treat them as public-safe listings.
- */

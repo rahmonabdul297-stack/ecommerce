@@ -117,7 +117,13 @@ export interface Address {
 }
 
 export type PaymentStatus = "pending" | "paid" | "failed" | string;
-export type OrderStatus = "pending" | "processing" | "shipped" | "delivered" | "cancelled" | string;
+export type OrderStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+  | string;
 
 export interface Order {
   _id: string;
@@ -129,6 +135,38 @@ export interface Order {
   paymentReference?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export type AdminOrderStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled";
+
+export interface AdminOrderCustomer {
+  _id?: string;
+  name?: string;
+  username?: string;
+  email?: string;
+  phone?: string;
+}
+
+export interface AdminOrder extends Order {
+  customer?: AdminOrderCustomer | string | null;
+  orderStatus: AdminOrderStatus;
+}
+
+export interface AdminOrdersPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface AdminOrdersData {
+  orders: AdminOrder[];
+  pagination: AdminOrdersPagination;
 }
 
 // ---- Addresses ----

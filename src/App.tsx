@@ -9,6 +9,7 @@ import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { AdminLayout } from "@/components/layout/AdminLayout";
+import { AdminRouteGuard } from "@/components/layout/AdminRouteGuard";
 import { ProductListPage } from "@/pages/storefront/ProductListPage";
 import { ProductDetailPage } from "@/pages/storefront/ProductDetailPage";
 import { CartPage } from "@/pages/storefront/CartPage";
@@ -20,9 +21,11 @@ import { PaymentReturnPage } from "@/pages/storefront/PaymentReturnPage";
 import { AuthPage } from "@/pages/storefront/AuthPage";
 import { ProfilePage } from "@/pages/storefront/ProfilePage";
 import { AdminProductsPage } from "@/pages/admin/AdminProductsPage";
+import { AdminOrdersPage } from "@/pages/admin/AdminOrdersPage";
 import { AdminProductFormPage } from "@/pages/admin/AdminProductFormPage";
 import { AdminCategoriesPage } from "@/pages/admin/AdminCategoriesPage";
 import { AdminUsersPage } from "@/pages/admin/AdminUsersPage";
+import { AdminLoginPage } from "@/pages/admin/AdminLoginPage";
 import ShopPage from "./pages/storefront/ShopPage";
 import { FaWhatsapp } from "react-icons/fa";
 import AboutPage from "./pages/storefront/AboutPage";
@@ -101,14 +104,23 @@ export default function App() {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/reset-password" element={<AuthPage />} />
+              <Route path="/admin/login" element={<AdminLoginPage />} />
 
               {/* Admin */}
-              <Route path="/admin" element={<AdminLayout />}>
+              <Route
+                path="/admin"
+                element={
+                  <AdminRouteGuard>
+                    <AdminLayout />
+                  </AdminRouteGuard>
+                }
+              >
                 <Route
                   index
                   element={<Navigate to="/admin/products" replace />}
                 />
                 <Route path="products" element={<AdminProductsPage />} />
+                <Route path="orders" element={<AdminOrdersPage />} />
                 <Route path="products/new" element={<AdminProductFormPage />} />
                 <Route
                   path="products/:id/edit"
