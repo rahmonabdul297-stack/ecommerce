@@ -1,4 +1,11 @@
-import { createContext, useContext, useCallback, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import type { Cart } from "@/lib/types";
 import * as cartService from "@/services/cartService";
 
@@ -7,7 +14,11 @@ interface CartContextValue {
   loading: boolean;
   error: string | null;
   refresh: () => Promise<void>;
-  addItem: (productId: string, quantity: number, selectedAttributes?: Record<string, string>) => Promise<void>;
+  addItem: (
+    productId: string,
+    quantity: number,
+    selectedAttributes?: Record<string, string>,
+  ) => Promise<void>;
   updateItem: (itemId: string, quantity: number) => Promise<void>;
   removeItem: (itemId: string) => Promise<void>;
   clear: () => Promise<void>;
@@ -37,10 +48,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addItem = useCallback(
-    async (productId: string, quantity: number, selectedAttributes?: Record<string, string>) => {
+    async (
+      productId: string,
+      quantity: number,
+      selectedAttributes?: Record<string, string>,
+    ) => {
       setError(null);
       try {
-        const c = await cartService.addToCart({ productId, quantity, selectedAttributes });
+        const c = await cartService.addToCart({
+          productId,
+          quantity,
+          selectedAttributes,
+        });
         setCart(c);
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Failed to add item";
@@ -48,7 +67,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         throw err;
       }
     },
-    []
+    [],
   );
 
   const updateItem = useCallback(async (itemId: string, quantity: number) => {
@@ -91,11 +110,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     refresh();
   }, [refresh]);
 
-  const itemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
+  const itemCount = cart?.items?.length ?? 0;
 
   return (
     <CartContext.Provider
-      value={{ cart, loading, error, refresh, addItem, updateItem, removeItem, clear, itemCount }}
+      value={{
+        cart,
+        loading,
+        error,
+        refresh,
+        addItem,
+        updateItem,
+        removeItem,
+        clear,
+        itemCount,
+      }}
     >
       {children}
     </CartContext.Provider>

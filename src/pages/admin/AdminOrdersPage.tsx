@@ -233,7 +233,7 @@ export function AdminOrdersPage() {
           <div className="mt-4 flex flex-wrap items-center gap-4">
             {accessStatus === 401 && (
               <Link
-                to="/auth"
+                to="/admin/login"
                 className="text-sm font-semibold text-teal-700 underline dark:text-teal-300"
               >
                 Sign in
@@ -350,7 +350,7 @@ export function AdminOrdersPage() {
                     <p>{orderUpdateError.message}</p>
                     {orderUpdateError.status === 401 && (
                       <Link
-                        to="/auth"
+                        to="/admin/login"
                         className="mt-2 inline-block font-semibold underline"
                       >
                         Sign in

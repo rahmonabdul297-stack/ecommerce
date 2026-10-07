@@ -407,7 +407,38 @@ export function AuthPage() {
             </Button>
           </form>
 
-          <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3 text-sm text-stone-500">
+          {mode === "signin" ? (
+            <div className="text-[10px] text-stone-500 py-3">
+              You do not have an account?{" "}
+              <span
+                onClick={() => {
+                  setMode("signup");
+                  setFeedback(null);
+                }}
+                className="text-teal-600"
+              >
+                sign up
+              </span>
+            </div>
+          ) : (
+            <div className="text-[10px] text-stone-500 py-3">
+              Do you have an existing account?{" "}
+              <span
+                onClick={() => {
+                  setMode("signin");
+                  setFeedback(null);
+                }}
+                className="text-teal-600"
+              >
+                sign in
+              </span>
+            </div>
+          )}
+          <Link to="/admin/login" className="w-full justify-center bg-teal-600 hover:bg-teal-500 text-white py-3 rounded-xl font-semibold text-center">
+            sign in as admin
+          </Link>
+
+          {/* <div className="mt-6 flex flex-wrap gap-x-5 gap-y-3 text-sm text-stone-500">
             {mode === "signin" && (
               <button
                 type="button"
@@ -468,7 +499,7 @@ export function AuthPage() {
                 Back to sign in
               </button>
             )}
-          </div>
+          </div> */}
           {feedback?.kind === "success" &&
             (mode === "forgot-email" || mode === "forgot-sms") && (
               <p className="mt-4 text-xs leading-5 text-stone-500">

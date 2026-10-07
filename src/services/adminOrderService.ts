@@ -94,8 +94,10 @@ export async function fetchAdminOrders(
     sortBy: query.sortBy,
     sortOrder: query.sortOrder,
   });
+
+  // Ensure path aligns correctly with your apiClient base URL setup
   const response = await api.get<ApiSuccess<unknown>>(
-    `/api/v1/admin/orders?${search.toString()}`,
+    `/admin/orders?${search.toString()}`,
     signal,
   );
 
@@ -107,18 +109,19 @@ export async function updateAdminOrderStatus(
   status: AdminOrderStatus,
 ): Promise<AdminOrderStatus> {
   const response = await api.patchJson<ApiSuccess<unknown>>(
-    `/api/v1/admin/orders/${encodeURIComponent(orderId)}/status`,
+    `/admin/orders/${encodeURIComponent(orderId)}/status`,
     { status },
   );
   const result = response.data;
   if (!result || typeof result !== "object") return status;
 
   const payload = result as Record<string, unknown>;
-  const nestedOrder = payload.order;
+  const nestedOrder = payload.order || payload.data;
   const returnedStatus =
     nestedOrder && typeof nestedOrder === "object"
       ? (nestedOrder as Record<string, unknown>).orderStatus
       : (payload.orderStatus ?? payload.status);
+      
   const supportedStatuses: AdminOrderStatus[] = [
     "pending",
     "processing",
