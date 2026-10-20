@@ -1,10 +1,9 @@
 import { ApiRequestError } from "./types";
 
-export const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)??"http://localhost:5000";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as
+  | string
+  | undefined;
 
-// Session auth uses HttpOnly cookies — always send credentials.
-// Never store access/refresh tokens in the browser.
 const DEFAULT_HEADERS: Record<string, string> = {
   Accept: "application/json",
 };
