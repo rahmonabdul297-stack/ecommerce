@@ -302,7 +302,7 @@ export function StorefrontFooter() {
 
             <div className="flex items-center gap-3 text-sm">
               <MapPin className="h-4 w-4 text-teal-500 shrink-0" />
-              <span>Oyo, Osun and Lagos State, Nigeria.</span>
+              <span>Lagos State, Nigeria.</span>
             </div>
           </div>
 
@@ -410,8 +410,8 @@ export function StorefrontFooter() {
             © {new Date().getFullYear()} Nokata. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-xs text-gray-500">
-            <span>Secure Paystack Checkout</span>
-            <span>Fast Lagos Delivery</span>
+            <span>Secure Payment Checkout</span>
+            <span>Fast Delivery</span>
           </div>
         </div>
       </div>

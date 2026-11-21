@@ -17,7 +17,7 @@ interface RequestOptions {
 }
 
 function buildUrl(path: string): string {
-  if (path.startsWith("http")) return path;
+  if (path.startsWith("https")) return path;
   return `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 

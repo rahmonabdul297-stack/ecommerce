@@ -11,7 +11,6 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
       <AlertCircle className="h-12 w-12 text-red-500" />
       <div>
         <p className="text-gray-900 font-medium">Something went wrong</p>
-        <p className="text-gray-500 text-sm mt-1 max-w-md">{message}</p>
       </div>
       {onRetry && (
         <button

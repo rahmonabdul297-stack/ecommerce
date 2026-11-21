@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/context/ToastContext";
-import { ThemeProvider } from "@/context/ThemeContext";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { AdminRouteGuard } from "@/components/layout/AdminRouteGuard";
 import { ProductListPage } from "@/pages/storefront/ProductListPage";
@@ -83,15 +83,17 @@ function WhatsAppButton() {
 }
 
 export default function App() {
+    const { theme } = useTheme();
+  
   return (
-    <ThemeProvider>
+  
       <ToastProvider>
         <CartProvider>
           <BrowserRouter>
             <WhatsAppButton />
             <Routes>
               {/* Storefront */}
-              <Route path="/" element={<ProductListPage />} />
+              <Route path="/" element={<ProductListPage theme={theme}/>} />
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/shop" element={<ShopPage />} />
@@ -135,6 +137,6 @@ export default function App() {
           </BrowserRouter>
         </CartProvider>
       </ToastProvider>
-    </ThemeProvider>
+    
   );
 }

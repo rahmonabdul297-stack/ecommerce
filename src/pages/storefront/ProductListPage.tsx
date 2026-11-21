@@ -18,7 +18,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ProductShowcase } from "./ProductShowcase";
 import { FaArrowRight } from "react-icons/fa";
 
-export function ProductListPage() {
+export function ProductListPage({ theme }: any) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export function ProductListPage() {
     load();
   }, [load]);
 
-  const filteredProducts = products.slice(0,5).filter((product) => {
+  const filteredProducts = products.slice(0, 5).filter((product) => {
     if (selectedCategory === "all") return true;
     if (typeof product.category === "object" && product.category !== null) {
       return (
@@ -62,7 +62,11 @@ export function ProductListPage() {
           src="/images/generated-image.jpg"
           alt="Smartphones and modern mobile accessories"
         />
-        <div className="absolute inset-0 bg-gradient-to-r lg:from-gray-950 lg:via-gray-900/90 to-transparent" />
+        {theme === "dark" ? (
+          <div className="absolute inset-0 bg-gradient-to-r lg:from-gray-950 lg:via-gray-900/90 to-transparent" />
+        ) : (
+          ""
+        )}
         <div className="relative mx-auto w-full max-w-7xl px-5 py-16 sm:px-8 lg:px-12">
           <span className="inline-flex items-center gap-1.5 bg-teal-500/20 text-teal-300 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase mb-4 border border-teal-500/30 backdrop-blur-sm">
             <Smartphone className="h-3.5 w-3.5" /> Premium Mobile Gear & Tech
@@ -128,7 +132,7 @@ export function ProductListPage() {
             </div>
             <div>
               <h4 className="font-semibold text-gray-900 text-sm">
-                Secure Paystack
+                Secure Payment
               </h4>
               <p className="text-xs text-gray-500">Safe & encrypted checkout</p>
             </div>
@@ -227,7 +231,7 @@ export function ProductListPage() {
                   Secure
                 </h4>
                 <p className="text-[11px] sm:text-xs text-gray-300 mt-0.5 sm:mt-1 font-medium">
-                  Paystack Checkout
+                  Payment Checkout
                 </p>
               </div>
             </div>
